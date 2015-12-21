@@ -82,7 +82,7 @@ namespace cocbasebuilder
         public void Mutate(Building[] b)
         {
             Random random = new Random((int.Parse(Guid.NewGuid().ToString().Substring(0, 8), System.Globalization.NumberStyles.HexNumber)));
-            var topx = this.scores.ToList().OrderByDescending(i => i).Take(this.size/7);
+            var topx = this.scores.ToList().OrderByDescending(i => i).Take(Convert.ToInt32(this.size*GlobalVar.elitepop));
             for (int i = 0; i < GlobalVar.PopulationSize; i++)
             {
                 if (topx.ToList().IndexOf(this.scores[i]) < 0)
@@ -92,7 +92,11 @@ namespace cocbasebuilder
                     {
                         x = random.Next(0, GlobalVar.PopulationSize);
                     }
-                    pop[i].Mutate(pop[x], b);
+                    for (int k = 0; k < GlobalVar.mergeCount; k++)
+                    {
+                        pop[i].Mutate(pop[x], b);
+                        ScoreTile(i, b);
+                    }
                 }
             }
         }
