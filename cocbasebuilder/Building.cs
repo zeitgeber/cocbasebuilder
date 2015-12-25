@@ -32,13 +32,13 @@ namespace cocbasebuilder
             keys = new List<int>();
             for (int i = 0; i < count; i++)
             {
-                keys.Add((i + 1) * 10 + counter);
+                keys.Add((i + 1) * 100 + counter);
             }            
         }
 
         public void PrintDetails()
         {
-            Console.WriteLine("name:" + this.name + ";" + (this.width.ToString()) + "x" + (this.height.ToString()) + ";hp:" + this.hp.ToString() + ";aoe:" + this.aoe.ToString() + ";dmg=" + this.dmg.ToString());
+            Console.WriteLine("name:" + this.name + ";" + (this.width.ToString()) + "x" + (this.height.ToString()) + ";hp:" + this.hp.ToString() + ";aoe:" + this.aoe.ToString() + ";dmg=" + this.dmg.ToString(),";  key="+this.keys[0].ToString());
         }
     }
 }
