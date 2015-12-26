@@ -111,7 +111,7 @@ namespace cocbasebuilder
 
         public bool ScorePopulation(Building[] b)
         {
-            this.candidates.Clear();
+            //this.candidates.Clear();
             
 
             for (int i = 0; i < GlobalVar.PopulationSize; i++)

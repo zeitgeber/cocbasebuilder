@@ -202,11 +202,10 @@ namespace cocbasebuilder
                     }
                 }
             }
+            this.DrawTile();
         }
         public void AddWalls(Building[] b)
         {
-            Matrix<double> d = Matrix<double>.Build.DenseOfMatrix(this.tile);
-
             foreach (Building t in b)
             {
                 if (t.name == "wall")
@@ -214,6 +213,10 @@ namespace cocbasebuilder
                     RemoveBuilding(t);
                 }
             }
+
+            Matrix<double> d = Matrix<double>.Build.DenseOfMatrix(this.tile);
+
+            
             for (int i = 0; i < size; i++)
             {
                 for (int j = 0; j < size; j++)
