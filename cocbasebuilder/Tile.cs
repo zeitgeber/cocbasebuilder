@@ -17,6 +17,7 @@ namespace cocbasebuilder
         public Matrix<double> scoremap;
         //private Building[] buildings;
         public Dictionary<int, double> buildingScores;
+        private Random random = new Random((int.Parse(Guid.NewGuid().ToString().Substring(0, 8), System.Globalization.NumberStyles.HexNumber)));
 
         public Tile(int size)
         {
@@ -29,27 +30,27 @@ namespace cocbasebuilder
         }
 
 
-        private bool IsOccupied(int x, int y, int w, int h, int key)
+        private bool IsOccupied(int x, int y, Building b, int key)
         {
             //int bordercheck = w * h;
-            if (x + w - 1 >= this.size || y + h - 1 >= this.size)
+            if (x + b.width - 1 >= this.size || y + b.height - 1 >= this.size)
             {
                 return true;
             }
-            if (this.tile.SubMatrix(y, h, x, w).RowSums().Sum() == 0)
+            if (this.tile.SubMatrix(y, b.height, x, b.width).RowSums().Sum() == 0)
             {
                 if (GlobalVar.PlaceAdjacent)
                 {
                     return false;
                 }
 
-                int topleftx = x - GlobalVar.buffer;
+                int topleftx = x - b.buffer;
                 if (topleftx < 0) { topleftx = 0; }
-                int toplefty = y - GlobalVar.buffer;
+                int toplefty = y - b.buffer;
                 if (toplefty < 0) { toplefty = 0; }
-                int bottomrightx = x + w + GlobalVar.buffer - 1;
+                int bottomrightx = x + b.width + b.buffer - 1;
                 if (bottomrightx >= this.size) { bottomrightx = this.size - 1; }
-                int bottomrighty = y + h + GlobalVar.buffer - 1;
+                int bottomrighty = y + b.height + b.buffer - 1;
                 if (bottomrighty >= this.size) { bottomrighty = this.size - 1; }
                 //Matrix<double> t = Matrix<double>.Build.DenseOfMatrix(this.tile.SubMatrix((x - 1) < 0 ? 0 : x - 1, (x - 1 + w + 2) >= size ? ((x - 1 + w + 1) >= size ? w : w + 1) : w + 2,
                 //    (y - 1) < 0 ? 0 : y - 1, (y - 1 + h + 2) >= size ? ((y - 1 + h + 1) >= size ? h : h + 1) : h + 2));
@@ -109,12 +110,12 @@ namespace cocbasebuilder
         public bool AddBuilding(Building b, int key)
         {
             int tries = maxRandomTries;
-            Random random = new Random((int.Parse(Guid.NewGuid().ToString().Substring(0, 8), System.Globalization.NumberStyles.HexNumber)));
+
             int x = random.Next(3, GlobalVar.TileSize - 6);
             int y = random.Next(3, GlobalVar.TileSize - 6);
             foreach (var point in this.heatmap.EnumerateIndexed(Zeros.AllowSkip).OrderByDescending(a => a.Item3))
             {
-                if (!IsOccupied(point.Item1, point.Item2, b.width, b.height, key) && point.Item1 >=3 && point.Item1 <=GlobalVar.TileSize - 6  && point.Item2 >=3 && point.Item2 <=GlobalVar.TileSize - 6)
+                if (!IsOccupied(point.Item1, point.Item2, b, key) && point.Item1 >= 3 && point.Item1 <= GlobalVar.TileSize - 6 && point.Item2 >= 3 && point.Item2 <= GlobalVar.TileSize - 6)
                 {
                     x = point.Item1;
                     y = point.Item2;
@@ -123,7 +124,7 @@ namespace cocbasebuilder
                 }
             }
 
-            while (IsOccupied(x, y, b.width, b.height, key) && tries > 0)
+            while (IsOccupied(x, y, b, key) && tries > 0)
             {
                 tries--;
                 x = random.Next(3, GlobalVar.TileSize - 6);
@@ -185,9 +186,34 @@ namespace cocbasebuilder
             Console.Write(d.ToString(GlobalVar.TileSize, GlobalVar.TileSize));
         }
 
-        public void AddWalls()
+        private void RemoveBuilding(Building b)
+        {
+            foreach (int key in b.keys)
+            {
+                for (int i = 0; i < scoremap.ColumnCount; i++)
+                {
+                    for (int j = 0; j < scoremap.RowCount; j++)
+                    {
+
+                        if (this.tile[j, i] == key)
+                        {
+                            this.tile[j, i] = GlobalVar.BaseShape;
+                        }
+                    }
+                }
+            }
+        }
+        public void AddWalls(Building[] b)
         {
             Matrix<double> d = Matrix<double>.Build.DenseOfMatrix(this.tile);
+
+            foreach (Building t in b)
+            {
+                if (t.name == "wall")
+                {
+                    RemoveBuilding(t);
+                }
+            }
             for (int i = 0; i < size; i++)
             {
                 for (int j = 0; j < size; j++)
@@ -277,23 +303,13 @@ namespace cocbasebuilder
                 {
 
 
-                    if (this.buildingScores[kvp.Key] > pair.buildingScores[kvp.Key])
+                    if (this.buildingScores[kvp.Key] >= pair.buildingScores[kvp.Key])
                     {
                         this.AddBuilding(newtile, kvp.Key, b);
                     }
                     else if (this.buildingScores[kvp.Key] < pair.buildingScores[kvp.Key])
                     {
                         this.AddBuilding(pair.tile, kvp.Key, b);
-                    }
-                    else
-                    {
-                        foreach (Building bb in b)
-                        {
-                            if (bb.keys.Contains(kvp.Key))
-                            {
-                                AddBuilding(bb, kvp.Key);
-                            }
-                        }
                     }
                 }
                 else
@@ -308,7 +324,7 @@ namespace cocbasebuilder
                 }
             }
 
-            
+
 
             return;
 
@@ -325,7 +341,7 @@ namespace cocbasebuilder
                         {
                             if (bb.keys.Contains(key))
                             {
-                                if (!IsOccupied(j, i, bb.width, bb.height, key))
+                                if (!IsOccupied(j, i, bb, key))
                                 {
                                     AddBuilding(j, i, bb, key);
                                     return;

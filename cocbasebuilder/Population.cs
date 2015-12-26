@@ -11,6 +11,9 @@ namespace cocbasebuilder
         Tile[] pop;
         double[] scores;
         int size;
+        HashSet<string> candidates = new HashSet<string>();
+
+           
         public Population(int size)
         {
             this.size = size;
@@ -108,6 +111,8 @@ namespace cocbasebuilder
 
         public bool ScorePopulation(Building[] b)
         {
+            this.candidates.Clear();
+            
 
             for (int i = 0; i < GlobalVar.PopulationSize; i++)
             {
@@ -124,13 +129,17 @@ namespace cocbasebuilder
         private bool ScoreTile(int index, Building[] b)
         {
             this.scores[index] = 0;
+            string id = "";
             foreach (Building t in b)
             {
                 foreach (int key in t.keys)
                 {
-                    this.scores[index] += pop[index].ScoreBuilding(t, key);
+                    var score = pop[index].ScoreBuilding(t, key);
+                    this.scores[index] += score;
+                    id = id + score.ToString();
                 }
             }
+            this.candidates.Add(id);
             if (this.scores[index] > GlobalVar.ScoreCutoff)
             {
                 return true;
@@ -157,6 +166,14 @@ namespace cocbasebuilder
                         ScoreTile(i, b);
                     }
                 }
+                else
+                {
+                    for (int k = 0; k < GlobalVar.mergeCount; k++)
+                    {
+                        pop[i].Mutate(pop[i], b);
+                        ScoreTile(i, b);
+                    }
+                }
             }
         }
 
@@ -165,16 +182,22 @@ namespace cocbasebuilder
 
             double maxValue = this.scores.Max();
             int maxIndex = this.scores.ToList().IndexOf(maxValue);
-            Console.WriteLine("Max:" + maxValue.ToString() + "  Avg:" + this.scores.Average());
+            Console.WriteLine("Max:" + maxValue.ToString() + "  Avg:" + this.scores.Average()+" Unique:"+candidates.Count.ToString());
             pop[maxIndex].DrawTile();
-            pop[maxIndex].AddWalls();
             pop[maxIndex].PrintScores();
             pop[maxIndex].DrawheatMap();
+        }
+
+        public void DrawWalls(Building[] b)
+        {
+            double maxValue = this.scores.Max();
+            int maxIndex = this.scores.ToList().IndexOf(maxValue);
+            pop[maxIndex].AddWalls(b);
         }
         public void GetBest()
         {
             double maxValue = this.scores.Max();
-            Console.WriteLine("Max:" + maxValue.ToString() + "  Avg:" + this.scores.Average());
+            Console.WriteLine("Max:" + maxValue.ToString() + "  Avg:" + this.scores.Average() + " Unique:" + candidates.Count.ToString());
         }
     }
 }

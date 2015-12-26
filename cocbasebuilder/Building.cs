@@ -16,9 +16,10 @@ namespace cocbasebuilder
         public List<int> keys { get; set; }
         public int count { get; set; }
         public double weight{ get; set; }
+        public int buffer { get; set; }
         private static int counter = 0;
 
-        public Building(string name, int w, int h, int hp, int aoe, int dmg, int count, double weight)
+        public Building(string name, int w, int h, int hp, int aoe, int dmg, int count, double weight, int buffer)
         {
             this.name = name;
             this.width = w;
@@ -28,6 +29,7 @@ namespace cocbasebuilder
             this.dmg = dmg;
             this.count = count;
             this.weight = weight;
+            this.buffer = buffer;
             ++counter;
             keys = new List<int>();
             for (int i = 0; i < count; i++)
@@ -38,7 +40,7 @@ namespace cocbasebuilder
 
         public void PrintDetails()
         {
-            Console.WriteLine("name:" + this.name + ";" + (this.width.ToString()) + "x" + (this.height.ToString()) + ";hp:" + this.hp.ToString() + ";aoe:" + this.aoe.ToString() + ";dmg=" + this.dmg.ToString(),";  key="+this.keys[0].ToString());
+            Console.WriteLine("name:" + this.name + ";" + (this.width.ToString()) + "x" + (this.height.ToString()) + ";hp:" + this.hp.ToString() + ";aoe:" + this.aoe.ToString() + ";dmg=" + this.dmg.ToString()+";  key="+this.keys[0].ToString());
         }
     }
 }
