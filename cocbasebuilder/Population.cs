@@ -179,13 +179,16 @@ namespace cocbasebuilder
 
         public void GetBest(Building[] b)
         {
-
+            int origRow = Console.CursorTop;
+            int origCol = Console.CursorLeft;
             double maxValue = this.scores.Max();
             int maxIndex = this.scores.ToList().IndexOf(maxValue);
+            Console.WriteLine("");
             Console.WriteLine("Max:" + maxValue.ToString() + "  Avg:" + this.scores.Average()+" Unique:"+candidates.Count.ToString());
             pop[maxIndex].DrawTile();
-            pop[maxIndex].PrintScores();
             pop[maxIndex].DrawheatMap();
+            //pop[maxIndex].PrintScores();
+            Console.SetCursorPosition(origCol, origRow);
         }
 
         public void DrawWalls(Building[] b)

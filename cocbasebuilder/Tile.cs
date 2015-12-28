@@ -113,7 +113,7 @@ namespace cocbasebuilder
 
             int x = random.Next(3, GlobalVar.TileSize - 6);
             int y = random.Next(3, GlobalVar.TileSize - 6);
-            foreach (var point in this.heatmap.EnumerateIndexed(Zeros.AllowSkip).OrderByDescending(a => a.Item3))
+            foreach (var point in this.scoremap.EnumerateIndexed(Zeros.AllowSkip).OrderByDescending(a => a.Item3))
             {
                 if (!IsOccupied(point.Item1, point.Item2, b, key) && point.Item1 >= 3 && point.Item1 <= GlobalVar.TileSize - 6 && point.Item2 >= 3 && point.Item2 <= GlobalVar.TileSize - 6)
                 {
@@ -150,6 +150,24 @@ namespace cocbasebuilder
                     if (this.tile[j, i] == key)
                     {
                         double rawscore = scoremap.SubMatrix(j, b.height, i, b.width).RowSums().Sum();
+
+                        int topleftx = j - b.buffer;
+                        if (topleftx < 0) { topleftx = 0; }
+                        int toplefty = i - b.buffer;
+                        if (toplefty < 0) { toplefty = 0; }
+                        int bottomrightx = j + b.width + b.buffer - 1;
+                        if (bottomrightx >= this.size) { bottomrightx = this.size - 1; }
+                        int bottomrighty = i + b.height + b.buffer - 1;
+                        if (bottomrighty >= this.size) { bottomrighty = this.size - 1; }
+                        Matrix<double> t = Matrix<double>.Build.DenseOfMatrix(this.tile.SubMatrix(toplefty, bottomrighty - toplefty + 1, topleftx, bottomrightx - topleftx + 1));
+                        HashSet<double> uniques = new HashSet<double>();
+                        foreach (double k in t.Enumerate())
+                        {
+                            uniques.Add(k);
+                        }
+
+                        rawscore = rawscore * (uniques.Count() / b.weight);
+
                         score = rawscore > GlobalVar.BuildingScoreCutoff ? GlobalVar.BuildingScoreCutoff : rawscore * b.weight;
                         this.buildingScores[key] = score;
                         return score;
@@ -161,7 +179,9 @@ namespace cocbasebuilder
 
         public void DrawTile()
         {
+
             Console.Write(this.tile.ToString(GlobalVar.TileSize, GlobalVar.TileSize));
+
         }
 
         public void PrintScores()
@@ -216,7 +236,7 @@ namespace cocbasebuilder
 
             Matrix<double> d = Matrix<double>.Build.DenseOfMatrix(this.tile);
 
-            
+
             for (int i = 0; i < size; i++)
             {
                 for (int j = 0; j < size; j++)

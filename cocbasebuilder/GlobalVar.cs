@@ -7,7 +7,7 @@ namespace cocbasebuilder
 {
     public static class GlobalVar
     {
-        public const int PopulationSize = 400;
+        public const int PopulationSize = 500;
         public const int MaxScore = 1000;
         public const int TileSize = 42;
         public const int BaseShape = 0;
@@ -18,6 +18,6 @@ namespace cocbasebuilder
         public const int ScoreCutoff = 55000000;
         public const int BuildingScoreCutoff = 999999;
         public const double elitepop = 0.142;
-        public const double mergeCount = 2;
+        public const double mergeCount = 1;
     }
 }

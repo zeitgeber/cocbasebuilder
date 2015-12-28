@@ -23,7 +23,7 @@ namespace cocbasebuilder
             Building mortar = new Building("mortar", 3, 3, 650, 11, 9, 4, 1, 4);
             Building bomb = new Building("bomb", 1, 1, 0, 3, 34, 6, 1, 4);
             Building giantbomb = new Building("giantbomb", 2, 2, 0, 3, 225, 3, 1, 4);
-            Building wall = new Building("wall", 1, 1, 100, 7, 400, 50, 6, 2);
+            Building wall = new Building("wall", 1, 1, 100, 7, 400, 120, 1, 1);
 
             Population pop = new Population(GlobalVar.PopulationSize);
             Building[] buildings = new Building[GlobalVar.TotalBuildings] { townhall,archer1,
@@ -39,19 +39,23 @@ namespace cocbasebuilder
             pop.GetBest(buildings);
             for (int i = 0; i < GlobalVar.Generations && !Console.KeyAvailable && pop.ScorePopulation(buildings); i++)
             {
-                Console.WriteLine("Generation: " + Convert.ToString(i));
                 pop.ScorePopulation(buildings);
-                pop.GetBest();
+                //pop.GetBest();
+                Console.Clear();
+                pop.GetBest(buildings);
+                Console.WriteLine("Generation: " + Convert.ToString(i));
                 pop.Mutate(buildings);                
             }
             
             pop.ScorePopulation(buildings);
-            pop.GetBest(buildings);
+            Console.Clear();
             pop.DrawWalls(buildings);
+                        
             foreach (Building b in buildings)
             {
                 b.PrintDetails();
             }
+            pop.GetBest(buildings);
             Console.ReadLine();
         }
     }
