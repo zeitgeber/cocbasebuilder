@@ -10,7 +10,7 @@ namespace cocbasebuilder
 
     class Tile
     {
-        private const int maxRandomTries = 200;
+        //private const int maxRandomTries = 200;
         private int size;
         private Matrix<double> tile;
         public Matrix<double> heatmap;
@@ -109,33 +109,40 @@ namespace cocbasebuilder
 
         public bool AddBuilding(Building b, int key)
         {
-            int tries = maxRandomTries;
+            //int tries = maxRandomTries;
 
-            int x = random.Next(3, GlobalVar.TileSize - 6);
-            int y = random.Next(3, GlobalVar.TileSize - 6);
-            foreach (var point in this.scoremap.EnumerateIndexed(Zeros.AllowSkip).OrderByDescending(a => a.Item3))
+            //int x = random.Next(3, GlobalVar.TileSize - 6);
+            //int y = random.Next(3, GlobalVar.TileSize - 6);
+            //int x;
+            //int y;
+            foreach (var point in this.scoremap.EnumerateIndexed().OrderByDescending(a => a.Item3))
             {
-                if (!IsOccupied(point.Item1, point.Item2, b, key) && point.Item1 >= 3 && point.Item1 <= GlobalVar.TileSize - 6 && point.Item2 >= 3 && point.Item2 <= GlobalVar.TileSize - 6)
+                if (point.Item1 >= 3 && point.Item1 <= GlobalVar.TileSize - 6 && point.Item2 >= 3 && point.Item2 <= GlobalVar.TileSize - 6)//this.tile.EnumerateIndexed().Count(a => (a.Item3 == GlobalVar.BaseShape)) > 0)
                 {
-                    x = point.Item1;
-                    y = point.Item2;
-                    AddBuilding(x, y, b, key);
-                    return true;
+                    if (!IsOccupied(point.Item1, point.Item2, b, key))
+                    {
+                        AddBuilding(point.Item1, point.Item2, b, key);
+                        return true;
+                    }
                 }
             }
 
-            while (IsOccupied(x, y, b, key) && tries > 0)
-            {
-                tries--;
-                x = random.Next(3, GlobalVar.TileSize - 6);
-                y = random.Next(3, GlobalVar.TileSize - 6);
-            }
+            //foreach (var point in this.tile.EnumerateIndexed(Zeros.Include))
+            //{
 
-            if (tries > 0)
-            {
-                AddBuilding(x, y, b, key);
-                return true;
-            }
+            //    while (IsOccupied(x, y, b, key) && tries > 0)
+            //    {
+            //        tries--;
+            //        x = random.Next(3, GlobalVar.TileSize - 6);
+            //        y = random.Next(3, GlobalVar.TileSize - 6);
+            //    }
+            //}
+
+            //if (tries > 0)
+            //{
+            //    AddBuilding(x, y, b, key);
+            //    return true;
+            //}
             Console.WriteLine("failed to find spot");
             return false;
         }
@@ -166,7 +173,7 @@ namespace cocbasebuilder
                             uniques.Add(k);
                         }
 
-                        rawscore = rawscore * (uniques.Count() / b.weight);
+                        rawscore = rawscore * Math.Pow(Convert.ToDouble(uniques.Count()) / b.weight, Convert.ToDouble(2.0));
 
                         score = rawscore > GlobalVar.BuildingScoreCutoff ? GlobalVar.BuildingScoreCutoff : rawscore * b.weight;
                         this.buildingScores[key] = score;
