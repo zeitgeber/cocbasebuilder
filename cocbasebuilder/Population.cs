@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using cocbasebuilder.Model;
 
 namespace cocbasebuilder
 {
@@ -85,7 +86,7 @@ namespace cocbasebuilder
             return result;
         }
 
-        public void AddBuilding(Building[] buildings)
+        public void AddBuilding(ExtendedBuilding[] buildings)
         {
 
             foreach (Tile t in pop)
@@ -109,7 +110,7 @@ namespace cocbasebuilder
             }
         }
 
-        public bool ScorePopulation(Building[] b)
+        public bool ScorePopulation(ExtendedBuilding[] b)
         {
             //this.candidates.Clear();
             
@@ -126,11 +127,11 @@ namespace cocbasebuilder
 
 
 
-        private bool ScoreTile(int index, Building[] b)
+        private bool ScoreTile(int index, ExtendedBuilding[] b)
         {
             this.scores[index] = 0;
             string id = "";
-            foreach (Building t in b)
+            foreach (ExtendedBuilding t in b)
             {
                 foreach (int key in t.keys)
                 {
@@ -147,7 +148,7 @@ namespace cocbasebuilder
             return false;
         }
 
-        public void Mutate(Building[] b)
+        public void Mutate(ExtendedBuilding[] b)
         {
             Random random = new Random((int.Parse(Guid.NewGuid().ToString().Substring(0, 8), System.Globalization.NumberStyles.HexNumber)));
             var topx = this.scores.ToList().OrderByDescending(i => i).Take(Convert.ToInt32(this.size * GlobalVar.elitepop));
@@ -177,7 +178,7 @@ namespace cocbasebuilder
             }
         }
 
-        public void GetBest(Building[] b)
+        public void GetBest(ExtendedBuilding[] b)
         {
             int origRow = Console.CursorTop;
             int origCol = Console.CursorLeft;
@@ -191,7 +192,7 @@ namespace cocbasebuilder
             Console.SetCursorPosition(origCol, origRow);
         }
 
-        public void DrawWalls(Building[] b)
+        public void DrawWalls(ExtendedBuilding[] b)
         {
             double maxValue = this.scores.Max();
             int maxIndex = this.scores.ToList().IndexOf(maxValue);
