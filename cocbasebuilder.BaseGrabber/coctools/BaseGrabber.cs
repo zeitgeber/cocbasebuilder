@@ -64,7 +64,8 @@ namespace cocbasebuilder.BaseGrabber.coctools
 
         private int getPositionNumber(char c)
         {
-            return Encoding.ASCII.GetBytes(new char[] { c })[0] - 96;
+            var p = Encoding.ASCII.GetBytes(new char[] { c })[0] - 96;
+            return p < 1 ? p + 58 : p;
         }
 
         
