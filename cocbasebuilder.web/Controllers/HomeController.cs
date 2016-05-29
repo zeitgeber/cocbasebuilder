@@ -13,5 +13,17 @@ namespace cocbasebuilder.web.Controllers
         {
             return View();
         }
+
+        public ActionResult RankMyBase(string url)
+        {
+            //call the rank function and set it to score
+            var score = 5;
+
+            
+            ViewBag.URL = HttpUtility.HtmlEncode(url??"");
+            ViewBag.BaseScore = score;
+
+            return View();
+        }
     }
 }
