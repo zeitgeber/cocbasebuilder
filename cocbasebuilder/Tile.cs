@@ -79,7 +79,7 @@ namespace cocbasebuilder
             return true;
         }
 
-        private void AddBuilding(int x, int y, ExtendedBuilding b, int key)
+        public void AddBuilding(int x, int y, ExtendedBuilding b, int key)
         {
             for (int i = x; i < x + b.width && i < this.size; i++)
             {
@@ -87,6 +87,18 @@ namespace cocbasebuilder
                 {
                     this.tile[j, i] = key;
                     AddDamage(b, j, i, key);
+                }
+            }
+        }
+
+        public void AddBuilding(ExtendedBuilding b)
+        {
+            for (int i = b.pos.Item2; i < b.pos.Item2 + b.width && i < this.size; i++)
+            {
+                for (int j = b.pos.Item1; j < b.pos.Item1 + b.height && j < this.size; j++)
+                {
+                    this.tile[j, i] = b.keys[0];
+                    AddDamage(b, j, i, b.keys[0]);
                 }
             }
         }
@@ -317,7 +329,7 @@ namespace cocbasebuilder
         }
 
 
-        public void Mutate(Tile pair, ExtendedBuilding[] b)
+        public void Mutate(Tile pair, List<ExtendedBuilding> b)
         {
 
             Matrix<double> newtile = Matrix<double>.Build.DenseOfMatrix(this.tile);
@@ -358,7 +370,7 @@ namespace cocbasebuilder
             return;
 
         }
-        private void AddBuilding(Matrix<double> sourceLayout, int key, ExtendedBuilding[] b)
+        private void AddBuilding(Matrix<double> sourceLayout, int key, List<ExtendedBuilding> b)
         {
             for (int i = 0; i < this.size; i++)
             {

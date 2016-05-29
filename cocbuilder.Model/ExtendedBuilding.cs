@@ -16,12 +16,12 @@ namespace cocbasebuilder.Model
         public int aoe { get; set; }
         public int dmg { get; set; }
         public List<int> keys { get; set; }
-        public int count { get; set; }
         public double weight { get; set; }
         public int buffer { get; set; }
         private static int counter = 0;
+        public Tuple<int,int> pos;
 
-        public ExtendedBuilding(string name, int w, int h, int hp, int aoe, int dmg, int count, double weight, int buffer)
+        public ExtendedBuilding(string name, int w, int h, int hp, int aoe, int dmg, double weight, int buffer, int top, int left)
         {
             this.name = name;
             this.width = w;
@@ -29,15 +29,12 @@ namespace cocbasebuilder.Model
             this.hp = hp;
             this.aoe = aoe;
             this.dmg = dmg;
-            this.count = count;
             this.weight = weight;
             this.buffer = buffer;
+            this.pos = new Tuple<int, int>(top, left);
             ++counter;
             keys = new List<int>();
-            for (int i = 0; i < count; i++)
-            {
-                keys.Add((i + 1) * 100 + counter);
-            }
+            keys.Add(100 + counter);
         }
 
         public void PrintDetails()

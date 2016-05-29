@@ -99,6 +99,19 @@ namespace cocbasebuilder
             }
         }
 
+        public void AddBuilding(List<ExtendedBuilding> buildings)
+        {
+
+            foreach (Tile t in pop)
+            {
+                foreach (ExtendedBuilding b in buildings)
+                {
+                    //t.AddBuilding(buildings[i], key);
+                    t.AddBuilding(b);
+                }
+            }
+        }
+
         public void DrawPopulation()
         {
             int i = 0;
@@ -110,7 +123,7 @@ namespace cocbasebuilder
             }
         }
 
-        public bool ScorePopulation(ExtendedBuilding[] b)
+        public bool ScorePopulation(List<ExtendedBuilding> b)
         {
             //this.candidates.Clear();
             
@@ -127,7 +140,7 @@ namespace cocbasebuilder
 
 
 
-        private bool ScoreTile(int index, ExtendedBuilding[] b)
+        private bool ScoreTile(int index, List<ExtendedBuilding> b)
         {
             this.scores[index] = 0;
             string id = "";
@@ -148,7 +161,7 @@ namespace cocbasebuilder
             return false;
         }
 
-        public void Mutate(ExtendedBuilding[] b)
+        public void Mutate(List<ExtendedBuilding> b)
         {
             Random random = new Random((int.Parse(Guid.NewGuid().ToString().Substring(0, 8), System.Globalization.NumberStyles.HexNumber)));
             var topx = this.scores.ToList().OrderByDescending(i => i).Take(Convert.ToInt32(this.size * GlobalVar.elitepop));
@@ -178,7 +191,7 @@ namespace cocbasebuilder
             }
         }
 
-        public void GetBest(ExtendedBuilding[] b)
+        public void GetBest(List<ExtendedBuilding> b)
         {
             int origRow = Console.CursorTop;
             int origCol = Console.CursorLeft;
