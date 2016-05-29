@@ -1,0 +1,78 @@
+
+http://www.clashofclans-tools.com/Layout-Builder#1aa-...-b-a17
+http://www.clashofclans-tools.com/Layout-Builder#2aa-...-d-a17
+http://www.clashofclans-tools.com/Layout-Builder#5aa-...-g-a17
+http://www.clashofclans-tools.com/Layout-Builder#5aa-...-f-a17
+http://www.clashofclans-tools.com/Layout-Builder#5aa-...-d-a17
+http://www.clashofclans-tools.com/Layout-Builder#5aada-...-dd-a17
+http://www.clashofclans-tools.com/Layout-Builder#5a2d_da-...-dd_d-a17
+http://www.clashofclans-tools.com/Layout-Builder#5daad_aa-...-dd_d-a17
+http://www.clashofclans-tools.com/Layout-Builder#5adda__aa-...-ff__c-a17
+http://www.clashofclans-tools.com/Layout-Builder#5adda__aa______ag-...-ff__c______b-a17
+
+http://www.clashofclans-tools.com/Layout-Builder#5adda__aa______ag____________aj-...-ff__c______b____________g-a17
+http://www.clashofclans-tools.com/Layout-Builder#5adPa__aa______ag____________aj-...-ff__c______b____________g-a17
+
+
+
+
+function sExpand(n){return n.replace(/[a-zA-Z][\d]+/g,function(n){var t=n.substr(0,1),i=parseInt(n.substr(1));return Array(i+2).join(t)})}
+
+
+getBIDX() = sequence array
+
+
+function saveLayout(n) {
+    for (var e = getBIDX(), l = [], a = [], d = document.getElementById("grid"), u = document.getElementsByTagName("DIV"), f = "", s, v, r, t, y, b, i = 0;
+	i < u.length; i++)
+        if ((u[i].className + "").indexOf("coc-b ") != -1) {
+            var o = u[i].className.split(" ")[1]
+              , r = parseInt(u[i].style.
+            left) / 20
+              , t = parseInt(u[i].style.top) / 20;
+            l[e[o]] = (l[e[o]] ? l[e[o]] : "") + getC(r) + getC(t);
+            a[e[o]] = (a[e[o]] ? a[e[o]] : "") + getC(u[i].level)
+        }
+    for (f = thL + l.join("_"),
+    s = "",
+    v = "",
+    r = 1; r < mapSize + 1; r++) {
+        var p = 0
+          , h = 0
+          , c = 0;
+        for (
+        t = 1; t < mapSize + 1; t++)
+            wallA[r][t] == 1 ? h || (s += (p ? "" : (s ? "_" : "") + getC(r)) + getC(t),
+            p = 1,
+            h = 1,
+            c = t) : h && (h = 0,
+            c != t - 1 && (s += c == t - 2 ? getC(t - 1) : "." + getC(t - 1)));
+        h && (h = 0,
+        c != t - 1 && (s += c == t - 2 ? getC(t - 1) : "." + getC(t - 1)))
+    }
+    for (r = 
+    1; r < mapSize + 1; r++)
+        for (t = 1; t < mapSize + 1; t++)
+            wallA[r][t] == 1 && (v += getC(wallL[r][t]));
+    var k = document.getElementById("troops")
+      , u = k.getElementsByTagName("A")
+      , w = [];
+    for (i = 0; i < u.length; i++)
+        (u[i].id + "").indexOf(
+        "troop-") != -1 && (y = u[i].id.split("-")[1],
+        b = defaultLVL["t" + y][0],
+        w[e["troop-" + y]] = getC(b));
+    if (f = f + "-" + s + "..." + v + "-" + a.join("_") + "-" + w.join(""),
+    f = sCompress(f),
+    f != "-" && !n) {
+        if (document.getElementById("layout-name").
+        value == "")
+            return alert("Please enter a name"),
+            !1;
+        document.getElementById("save").className = "control-win save-wait";
+        xSend("Clash.Save_Layout", "id=" + (layoutID ? layoutID : "") + "&name=" + escape(document.getElementById(
+        "layout-name").value) + "&th=" + thL + "&type=" + escape(document.getElementById("layout-type").value) + "&data=" + f + "&desc=" + escape(document.getElementById("layout-desc").value) + "&tags=" + encodeURIComponent(document.
+        getElementsByName("lt-tag-v")[0].value), saveLayoutCB)
+    }
+    return f
+}

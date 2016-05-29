@@ -2,8 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using cocbasebuilder.Model;
 
 namespace cocbasebuilder
 {
@@ -30,7 +29,7 @@ namespace cocbasebuilder
         }
 
 
-        private bool IsOccupied(int x, int y, Building b, int key)
+        private bool IsOccupied(int x, int y, ExtendedBuilding b, int key)
         {
             //int bordercheck = w * h;
             if (x + b.width - 1 >= this.size || y + b.height - 1 >= this.size)
@@ -80,7 +79,7 @@ namespace cocbasebuilder
             return true;
         }
 
-        private void AddBuilding(int x, int y, Building b, int key)
+        public void AddBuilding(int x, int y, ExtendedBuilding b, int key)
         {
             for (int i = x; i < x + b.width && i < this.size; i++)
             {
@@ -92,7 +91,19 @@ namespace cocbasebuilder
             }
         }
 
-        private void AddDamage(Building b, int x, int y, int key)
+        public void AddBuilding(ExtendedBuilding b)
+        {
+            for (int i = b.pos.Item2; i < b.pos.Item2 + b.width && i < this.size; i++)
+            {
+                for (int j = b.pos.Item1; j < b.pos.Item1 + b.height && j < this.size; j++)
+                {
+                    this.tile[j, i] = b.keys[0];
+                    AddDamage(b, j, i, b.keys[0]);
+                }
+            }
+        }
+
+        private void AddDamage(ExtendedBuilding b, int x, int y, int key)
         {
             for (int i = x - b.aoe + 1; i <= x + b.aoe - 1; i++)
             {
@@ -107,7 +118,7 @@ namespace cocbasebuilder
             }
         }
 
-        public bool AddBuilding(Building b, int key)
+        public bool AddBuilding(ExtendedBuilding b, int key)
         {
             //int tries = maxRandomTries;
 
@@ -147,7 +158,7 @@ namespace cocbasebuilder
             return false;
         }
 
-        public double ScoreBuilding(Building b, int key)
+        public double ScoreBuilding(ExtendedBuilding b, int key)
         {
             double score = 0;
             for (int i = 0; i < scoremap.ColumnCount; i++)
@@ -213,7 +224,7 @@ namespace cocbasebuilder
             Console.Write(d.ToString(GlobalVar.TileSize, GlobalVar.TileSize));
         }
 
-        private void RemoveBuilding(Building b)
+        private void RemoveBuilding(ExtendedBuilding b)
         {
             foreach (int key in b.keys)
             {
@@ -231,9 +242,9 @@ namespace cocbasebuilder
             }
             this.DrawTile();
         }
-        public void AddWalls(Building[] b)
+        public void AddWalls(ExtendedBuilding[] b)
         {
-            foreach (Building t in b)
+            foreach (ExtendedBuilding t in b)
             {
                 if (t.name == "wall")
                 {
@@ -318,7 +329,7 @@ namespace cocbasebuilder
         }
 
 
-        public void Mutate(Tile pair, Building[] b)
+        public void Mutate(Tile pair, List<ExtendedBuilding> b)
         {
 
             Matrix<double> newtile = Matrix<double>.Build.DenseOfMatrix(this.tile);
@@ -344,7 +355,7 @@ namespace cocbasebuilder
                 }
                 else
                 {
-                    foreach (Building bb in b)
+                    foreach (ExtendedBuilding bb in b)
                     {
                         if (bb.keys.Contains(kvp.Key))
                         {
@@ -359,7 +370,7 @@ namespace cocbasebuilder
             return;
 
         }
-        private void AddBuilding(Matrix<double> sourceLayout, int key, Building[] b)
+        private void AddBuilding(Matrix<double> sourceLayout, int key, List<ExtendedBuilding> b)
         {
             for (int i = 0; i < this.size; i++)
             {
@@ -367,7 +378,7 @@ namespace cocbasebuilder
                 {
                     if (sourceLayout[i, j] == key)
                     {
-                        foreach (Building bb in b)
+                        foreach (ExtendedBuilding bb in b)
                         {
                             if (bb.keys.Contains(key))
                             {
