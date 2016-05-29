@@ -130,9 +130,9 @@ namespace cocbasebuilder
         {
             this.scores[index] = 0;
             string id = "";
-            foreach (Building t in b)
+            foreach (Building t in b.OrderBy(i => i.name))
             {
-                foreach (int key in t.keys)
+                foreach (int key in t.keys.OrderBy(i => i))
                 {
                     var score = pop[index].ScoreBuilding(t, key);
                     this.scores[index] += score;

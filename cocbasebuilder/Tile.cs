@@ -15,6 +15,7 @@ namespace cocbasebuilder
         private Matrix<double> tile;
         public Matrix<double> heatmap;
         public Matrix<double> scoremap;
+        public Matrix<double> hpmap;
         //private Building[] buildings;
         public Dictionary<int, double> buildingScores;
         private Random random = new Random((int.Parse(Guid.NewGuid().ToString().Substring(0, 8), System.Globalization.NumberStyles.HexNumber)));
@@ -26,6 +27,7 @@ namespace cocbasebuilder
             this.tile = Matrix<double>.Build.Dense(size, size, GlobalVar.BaseShape);
             this.heatmap = Matrix<double>.Build.Dense(size, size, 1);
             this.scoremap = Matrix<double>.Build.Dense(size, size, 1);
+            this.hpmap = Matrix<double>.Build.Dense(size, size, 0);
             this.buildingScores = new Dictionary<int, double>();
         }
 
@@ -37,7 +39,11 @@ namespace cocbasebuilder
             {
                 return true;
             }
-            if (this.tile.SubMatrix(y, b.height, x, b.width).RowSums().Sum() == 0)
+            if (this.tile[y, x] != GlobalVar.BaseShape)
+            {
+                return true;
+            }
+            if (this.tile.SubMatrix(y, b.height, x, b.width).RowSums().Sum() == GlobalVar.BaseShape)
             {
                 if (GlobalVar.PlaceAdjacent)
                 {
@@ -87,6 +93,7 @@ namespace cocbasebuilder
                 for (int j = y; j < y + b.height && j < this.size; j++)
                 {
                     this.tile[j, i] = key;
+                    this.hpmap[j, i] += b.hp;
                     AddDamage(b, j, i, key);
                 }
             }
@@ -166,14 +173,15 @@ namespace cocbasebuilder
                         if (bottomrightx >= this.size) { bottomrightx = this.size - 1; }
                         int bottomrighty = i + b.height + b.buffer - 1;
                         if (bottomrighty >= this.size) { bottomrighty = this.size - 1; }
-                        Matrix<double> t = Matrix<double>.Build.DenseOfMatrix(this.tile.SubMatrix(toplefty, bottomrighty - toplefty + 1, topleftx, bottomrightx - topleftx + 1));
+                        Matrix<double> tb = Matrix<double>.Build.DenseOfMatrix(this.tile.SubMatrix(toplefty, bottomrighty - toplefty + 1, topleftx, bottomrightx - topleftx + 1));
+                        Matrix<double> thp = Matrix<double>.Build.DenseOfMatrix(this.hpmap.SubMatrix(toplefty, bottomrighty - toplefty + 1, topleftx, bottomrightx - topleftx + 1));
                         HashSet<double> uniques = new HashSet<double>();
-                        foreach (double k in t.Enumerate())
+                        foreach (double k in tb.Enumerate())
                         {
-                            uniques.Add(k);
+                            uniques.Add(k % 100);
                         }
-
-                        rawscore = rawscore * Math.Pow(Convert.ToDouble(uniques.Count()) / b.weight, Convert.ToDouble(2.0));
+                        //modify this , create hp matix, priority matrix
+                        rawscore = rawscore * (Convert.ToDouble(uniques.Count()) / GlobalVar.TotalBuildings) * (thp.ColumnAbsoluteSums().Sum() / hpmap.ColumnAbsoluteSums().Sum());
 
                         score = rawscore > GlobalVar.BuildingScoreCutoff ? GlobalVar.BuildingScoreCutoff : rawscore * b.weight;
                         this.buildingScores[key] = score;
@@ -211,6 +219,7 @@ namespace cocbasebuilder
                 }
             }
             Console.Write(d.ToString(GlobalVar.TileSize, GlobalVar.TileSize));
+            Console.Write(this.hpmap.ToString(GlobalVar.TileSize, GlobalVar.TileSize));
         }
 
         private void RemoveBuilding(Building b)
@@ -285,36 +294,105 @@ namespace cocbasebuilder
                     //Console.ReadLine();
                 }
             }
-            //update = true;
-            //while (update)
-            //{
-            //    update = false;
-            //    for (int x = 0; x < this.size; x++)
-            //    {
-            //        for (int y = 0; y < this.size; y++)
-            //        {
-            //            int topleftx = x - 1;
-            //            while (topleftx < 0) { ++topleftx; }
-            //            int toplefty = y - 1;
-            //            while (toplefty < 0) { ++toplefty; }
-            //            int bottomrightx = x + 1;
-            //            while (bottomrightx >= this.size) { bottomrightx--; }
-            //            int bottomrighty = y + 1;
-            //            while (bottomrighty >= this.size) { bottomrighty--; }
-            //            if (d[x, y] != GlobalVar.BaseShape && (d.SubMatrix(toplefty, bottomrighty - toplefty + 1, topleftx, bottomrightx - topleftx + 1).ColumnSums().Sum() > 7 ||
-            //                d.SubMatrix(toplefty, bottomrighty - toplefty + 1, topleftx, bottomrightx - topleftx + 1).ColumnSums().Sum() < 2))
-            //            {
-            //                d[x, y] = GlobalVar.BaseShape;
-            //                update = true;
 
-            //            }
-            //        }
-            //        //Console.Write(d.ToString(GlobalVar.TileSize, GlobalVar.TileSize));
-            //        //Console.ReadLine();
-            //    }
-            //}
             d = d.Multiply(11);
             Console.Write(d.ToString(GlobalVar.TileSize, GlobalVar.TileSize));
+            FindConnectedComponents(d);
+        }
+
+        //   algorithm TwoPass(data)
+        //linked = []
+        //labels = structure with dimensions of data, initialized with the value of Background
+
+        //First pass
+
+        //for row in data:
+        //    for column in row:
+        //        if data[row][column] is not Background
+
+        //            neighbors = connected elements with the current element's value
+
+        //            if neighbors is empty
+        //                linked[NextLabel] = set containing NextLabel
+        //                labels[row][column] = NextLabel
+        //                NextLabel += 1
+
+        //            else
+
+        //                Find the smallest label
+
+        //                L = neighbors labels
+        //                labels[row][column] = min(L)
+        //                for label in L
+        //                    linked[label] = union(linked[label], L)
+
+        //Second pass
+
+        //for row in data
+        //    for column in row
+        //        if data[row][column] is not Background
+        //            labels[row][column] = find(labels[row][column])
+
+        //return labels
+
+        private void FindConnectedComponents(Matrix<double> d)
+        {
+            Matrix<double> labels = Matrix<double>.Build.Dense(size, size, GlobalVar.BaseShape);
+            int label = 1;
+            int update = 1;
+            //optimize by doing creating equivalence of labels and update in second pass
+            while (update == 1)
+            {
+                update = 0;
+                Console.WriteLine("labels:" + Convert.ToString(label));
+                for (int i = 0; i < d.RowCount; i++)
+                {
+                    for (int j = 0; j < d.ColumnCount; j++)
+                    {
+                        if (d[i, j] == GlobalVar.BaseShape)
+                        {
+                            int topleftx = j - 1;
+                            if (topleftx < 0) { topleftx = 0; }
+                            int toplefty = i - 1;
+                            if (toplefty < 0) { toplefty = 0; }
+                            int bottomrightx = j + 1;
+                            if (bottomrightx >= this.size) { bottomrightx = this.size - 1; }
+                            int bottomrighty = i + 1;
+                            if (bottomrighty >= this.size) { bottomrighty = this.size - 1; }
+                            if (labels.SubMatrix(toplefty, bottomrighty - toplefty + 1, topleftx, bottomrightx - topleftx + 1).RowSums().Sum() == 0)
+                            {
+                                labels[i, j] = label;
+                                label++;
+                                update = 1;
+                            }
+                            //else
+                            //{
+                            double k = labels.SubMatrix(toplefty, bottomrighty - toplefty + 1, topleftx, bottomrightx - topleftx + 1).EnumerateIndexed(Zeros.AllowSkip).OrderBy(a => a.Item3).First().Item3;
+                            if (labels[i, j] != k)
+                            {
+                                //Matrix<double> newlables = Matrix<double>.Build.Dense(bottomrighty - toplefty + 1, bottomrightx - topleftx + 1, k);
+                                //labels.SetSubMatrix(toplefty, topleftx, newlables);
+                                for (int p = toplefty; p < bottomrighty - toplefty + 1 + toplefty;p++ )
+                                {
+                                    for (int q = topleftx; q < bottomrightx - topleftx + 1 + topleftx; q++)
+                                    {
+                                        if (d[p,q] == GlobalVar.BaseShape)
+                                        {
+                                            labels[p, q] = k;
+                                        }
+                                    }
+                                }
+
+                                    update = 1;
+                            }
+                            //                            }
+                        }
+                    }
+                }
+                Console.Write(labels.ToString(GlobalVar.TileSize, GlobalVar.TileSize));
+                //Console.ReadLine();
+            }
+            Console.Write(labels.ToString(GlobalVar.TileSize, GlobalVar.TileSize));
         }
 
 
@@ -325,6 +403,7 @@ namespace cocbasebuilder
             this.tile.Clear();
             heatmap = Matrix<double>.Build.Dense(size, size, 1);
             scoremap = Matrix<double>.Build.Dense(size, size, 1);
+            hpmap = Matrix<double>.Build.Dense(size, size, 0);
             int minkey = this.buildingScores.OrderBy(i => i.Value).First().Key;
 
             foreach (KeyValuePair<int, double> kvp in this.buildingScores.OrderByDescending(i => i.Value))

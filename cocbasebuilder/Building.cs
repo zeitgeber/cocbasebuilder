@@ -10,7 +10,7 @@ namespace cocbasebuilder
         public string name;
         public int width { get; set; }
         public int height { get; set; }
-        private int hp;
+        public int hp;
         public int aoe { get; set; }
         public int dmg { get; set; }
         public List<int> keys { get; set; }
