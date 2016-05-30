@@ -15,15 +15,15 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>cocbasebuilder.web</RootNamespace>
     <AssemblyName>cocbasebuilder.web</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
     <UseGlobalApplicationHostFile />
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>8a3ff0a6</NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -48,22 +48,21 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Web.Extensions" />
-    <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Web.Razor">
@@ -131,6 +130,28 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Models\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\cocbasebuilder.BaseGrabber\cocbasebuilder.BaseGrabber.csproj">
+      <Project>{b6b72250-0716-4f98-8608-e8de76f1267b}</Project>
+      <Name>cocbasebuilder.BaseGrabber</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\cocbasebuilder.UnitTest\cocbasebuilder.UnitTest.csproj">
+      <Project>{9b496e11-87ae-416a-93e1-b4d809a78fe1}</Project>
+      <Name>cocbasebuilder.UnitTest</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\cocbasebuilder\cocbasebuilder.csproj">
+      <Project>{c17afc15-ead4-4b0f-aa5f-a17f11a44e86}</Project>
+      <Name>cocbasebuilder</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\cocbuilder.Model\cocbasebuilder.Model.csproj">
+      <Project>{0c37ab2a-103b-4c6d-93e0-9cd32e4f3fd9}</Project>
+      <Name>cocbasebuilder.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\cocdb\cocdb.csproj">
+      <Project>{b6dad27d-9004-4066-b79e-66c4bbbcf33b}</Project>
+      <Name>cocdb</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

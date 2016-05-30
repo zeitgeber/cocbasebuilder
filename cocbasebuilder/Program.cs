@@ -55,6 +55,7 @@ namespace cocbasebuilder
             //pop.DrawWalls(buildings);
 
             string url = "Builder#8fqtfEopEvA_hnwgAonBog_nvpnvw__nywjoj_ywknjv_wp_AssjjrrA_snrwnr_wm__ftDwvDIsvInI_ErsEIwzGrIbv_dzbm_hwrgEu_foBxif_nEqfGwgwcpdy_DpDqoEivouux_n2uBwoF_uyon_kdobsbwb_GkIo_EA_rr_aq_ihAizAhz_AekGfkhEgh_ws__uwpu_no_Hz-fo.y_gnoyz_hnz_inz_jnr.vz_knrvz_lnrvz_mnrvz_nnr.H_og.nrHI_pfgnrI_qfnrI_rfnr.EI_sfj.nrwAEI_tfjnrwAEI_ufjnrwAEI_vfjnrwA.EI_wfj.wAI_xfwAI_yfwAHI_zfgwA.H_Ag.wA_BoswA_CoswA_DoswA_Eops.wA_FoA_GoA_HozA_Io.z...i224-i4_i4_f2__l2_l2_c_f3_e2_b__l5_l5_dd_d2_c2_e5_b5_d3_bb_j3_cc_d_h_f_g3_b4_d__bb_d_b-a17";
+            //string url = "Builder#8cAlJryhruI_gAoJdxlCpC_jynGru__bEyIhn_hKdnyE_sq_gxqFvzmq_nudruE_dI__zAzxzrzoumrm_AkCnajCKlmjj_vqvu_eElGiI_fvrIhv_vCxClslqwClr_btuMgtgruHwH_pFlxltuC_fGhI_gjdjomzu_CHxl_FE_gE_Cq_mhCzCurh_paMaMMaaMy_ny__eGhJ_jw_CE-bx.CE.O_cv.ENO_dn.vEO_envEO_fnvEO_gnvEO_hnvEO_invEO_jnvEO_knvEO_ln.vC.O_mqvCGN_nqu.CGNO_oquyCGNO_pquyC.GNO_qquyCNO_rqu.CNO_sq.uyCNO_tquyCN_uquyC.N_vqu.CEM_wqzEM_xqzEM_yqzEM_zq.EM_AEM_BEM_CE.M...i224-k4_k4_g2__l2_l2_e_g3_g2_b__m5_m5_dd_g2_d2_f5_b5_d3_bb_k3_ee_d_i_g_g3_b4_e__cc_e_c-a17";
             IBaseGrabber bg = new BaseGrabber.coctools.BaseGrabber(url);
             var actualResult = bg.ParseData();
             //"cannon,archer,air,xbow,goldstorage,elixerstorage,delixerstorage,mortar,wizard,herobarbarian,heroarcher,gold,elixer,delixer,tesla,bigbomb,bomb,spring,airbomb,airmine,barracks,dbarracks,spells,townhall,research,army,builder,castle,inferno,skeleton,airsweeper,darkspells,herowarden,eagle".Split(',');
@@ -142,6 +143,20 @@ namespace cocbasebuilder
             pop.ScorePopulation(buildings);
             pop.GetBest(buildings);
             Console.ReadLine();
+
+            for (int i = 0; i < GlobalVar.Generations && !Console.KeyAvailable && pop.ScorePopulation(buildings); i++)
+            {
+                pop.ScorePopulation(buildings);
+                //pop.GetBest();
+                Console.Clear();
+                pop.GetBest(buildings);
+                Console.WriteLine("Generation: " + Convert.ToString(i));
+                pop.Mutate(buildings);
+            }
+
+            pop.ScorePopulation(buildings);
+            Console.Clear();
+            pop.DrawWalls(buildings);
         }
     }
 }

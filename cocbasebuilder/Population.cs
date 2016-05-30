@@ -7,7 +7,7 @@ using cocbasebuilder.Model;
 
 namespace cocbasebuilder
 {
-    class Population
+    public class Population
     {
         Tile[] pop;
         double[] scores;
@@ -28,6 +28,7 @@ namespace cocbasebuilder
         }
 
         static Random random = new Random();
+        //private int p;
 
         // Note, max is exclusive here!
         public static List<int> GenerateRandom(int count, int min, int max)
@@ -191,21 +192,22 @@ namespace cocbasebuilder
             }
         }
 
-        public void GetBest(List<ExtendedBuilding> b)
+        public double GetBest(List<ExtendedBuilding> b)
         {
             int origRow = Console.CursorTop;
             int origCol = Console.CursorLeft;
             double maxValue = this.scores.Max();
             int maxIndex = this.scores.ToList().IndexOf(maxValue);
-            Console.WriteLine("");
-            Console.WriteLine("Max:" + maxValue.ToString() + "  Avg:" + this.scores.Average()+" Unique:"+candidates.Count.ToString());
+            //Console.WriteLine("");
+            //Console.WriteLine("Max:" + maxValue.ToString() + "  Avg:" + this.scores.Average()+" Unique:"+candidates.Count.ToString());
             pop[maxIndex].DrawTile();
             pop[maxIndex].DrawheatMap();
             //pop[maxIndex].PrintScores();
             Console.SetCursorPosition(origCol, origRow);
+            return maxValue;
         }
 
-        public void DrawWalls(ExtendedBuilding[] b)
+        public void DrawWalls(List<ExtendedBuilding> b)
         {
             double maxValue = this.scores.Max();
             int maxIndex = this.scores.ToList().IndexOf(maxValue);

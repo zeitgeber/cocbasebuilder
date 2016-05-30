@@ -242,7 +242,7 @@ namespace cocbasebuilder
             }
             this.DrawTile();
         }
-        public void AddWalls(ExtendedBuilding[] b)
+        public void AddWalls(List<ExtendedBuilding> b)
         {
             foreach (ExtendedBuilding t in b)
             {
